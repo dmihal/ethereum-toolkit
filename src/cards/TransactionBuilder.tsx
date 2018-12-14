@@ -48,22 +48,22 @@ export default class TransactionBuilder extends Component <Props, State> {
 
   web3 = new Web3();
 
-  getJson() {
-    return JSON.stringify(this.state);
+  getTxObj() {
+    const { nonce, gasPrice, gasLimit, to, value, data, privateKey } = this.state;
+    return {
+      nonce: this.web3.utils.toHex(nonce),
+      gasPrice: this.web3.utils.toHex(gasPrice),
+      gasLimit: this.web3.utils.toHex(gasLimit),
+      to,
+      value: this.web3.utils.toHex(value),
+      data,
+    };
   }
 
   getSigned() {
     if (PRIVATE_KEY_REGEX.test(this.state.privateKey)) {
-      const { nonce, gasPrice, gasLimit, to, value, data, privateKey } = this.state;
-      const tx = new EthereumTX({
-        nonce: this.web3.utils.toHex(nonce),
-        gasPrice: this.web3.utils.toHex(gasPrice),
-        gasLimit: this.web3.utils.toHex(gasLimit),
-        to,
-        value: this.web3.utils.toHex(value),
-        data,
-      });
-      tx.sign(Buffer.from(privateKey, 'hex'));
+      const tx = new EthereumTX(this.getTxObj());
+      tx.sign(Buffer.from(this.state.privateKey, 'hex'));
       const raw = '0x' + tx.serialize().toString('hex');
       return raw;
     }
@@ -73,7 +73,7 @@ export default class TransactionBuilder extends Component <Props, State> {
   render() {
     const { nonce, gasPrice, gasLimit, to, value, data, signerExpanded, privateKey } = this.state;
 
-    const json = this.getJson();
+    const txObject = this.getTxObj();
 
     let signed = '';
     let error = null;
@@ -125,7 +125,7 @@ export default class TransactionBuilder extends Component <Props, State> {
           />
 
           <Typography>{error}</Typography>
-          <pre>{json}</pre>
+          <pre>{JSON.stringify(txObject)}</pre>
         </CardContent>
 
         <CardActions disableActionSpacing>
