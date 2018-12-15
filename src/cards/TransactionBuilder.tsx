@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import EthereumTX from 'ethereumjs-tx';
 import ethereumUtils from 'ethereumjs-util';
 import Web3 from 'web3';
@@ -25,9 +25,12 @@ interface State {
   value: string,
   data: string,
 
+  importExpanded: boolean,
   signerExpanded: boolean,
 
   privateKey: string,
+  txToImport: string,
+  importedSender: string | null,
 }
 
 const PRIVATE_KEY_REGEX = /[0-9a-fA-F]{64}/;
@@ -41,12 +44,30 @@ export default class TransactionBuilder extends Component <Props, State> {
     value: '0',
     data: '',
 
+    importExpanded: false,
     signerExpanded: false,
 
     privateKey: '',
+    txToImport: '',
+    importedSender: null,
   };
 
   web3 = new Web3();
+
+  importTx() {
+    const bufferToNumStr = (val: Buffer) => this.web3.utils.hexToNumberString(ethereumUtils.bufferToHex(val));
+    const tx = new EthereumTX(this.state.txToImport);
+    this.setState({
+      nonce: bufferToNumStr(tx.nonce),
+      gasPrice: bufferToNumStr(tx.gasPrice),
+      gasLimit: bufferToNumStr(tx.gasLimit),
+      to: ethereumUtils.bufferToHex(tx.to),
+      value: bufferToNumStr(tx.value),
+      data: ethereumUtils.bufferToHex(tx.data),
+
+      importedSender: ethereumUtils.bufferToHex(tx.getSenderAddress()),
+    });
+  }
 
   getTxObj() {
     const { nonce, gasPrice, gasLimit, to, value, data, privateKey } = this.state;
@@ -70,8 +91,36 @@ export default class TransactionBuilder extends Component <Props, State> {
     return '';
   }
 
+  importPanel() {
+    const { importExpanded, txToImport } = this.state;
+    return (
+      <Fragment>
+        <CardActions disableActionSpacing>
+          <Button fullWidth={true} onClick={(e) => this.setState({ importExpanded: !importExpanded })}>
+            <ExpandMoreIcon /> Import Raw Signed Transaction
+          </Button>
+        </CardActions>
+
+        <Collapse in={importExpanded} timeout="auto" unmountOnExit>
+          <CardContent>
+            <HexInput
+              label="Raw Transaction"
+              value={txToImport}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.setState({ txToImport: e.target.value })}
+            />
+            <Button disabled={txToImport.length === 0} onClick={() => this.importTx()}>
+              Import
+            </Button>
+          </CardContent>
+        </Collapse>
+      </Fragment>
+    );
+  }
+
   render() {
-    const { nonce, gasPrice, gasLimit, to, value, data, signerExpanded, privateKey } = this.state;
+    const {
+      nonce, gasPrice, gasLimit, to, value, data, signerExpanded, privateKey, importedSender
+    } = this.state;
 
     const txObject = this.getTxObj();
 
@@ -89,6 +138,13 @@ export default class TransactionBuilder extends Component <Props, State> {
           <Typography gutterBottom variant="h5" component="h2">
             Transaction Builder & Signer
           </Typography>
+
+          {this.importPanel()}
+
+          {importedSender && (
+            <Typography>Imported transaction signed by {importedSender}</Typography>
+          )}
+
           <TextField
             value={nonce}
             type="number"
