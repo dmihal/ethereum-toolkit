@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ethereumUtils from 'ethereumjs-util';
 import Card from '@material-ui/core/Card';
 import Button from '@material-ui/core/Button';
 import CardContent from '@material-ui/core/CardContent';
@@ -27,6 +28,12 @@ export default class FunctionSignature extends Component <Props, State> {
     signature: '',
   }
 
+  async encode() {
+    const { keccak256, bufferToHex } = ethereumUtils;
+    const signature = bufferToHex(keccak256(this.state.fnInterface)).substr(0, 10);
+    this.setState({ signature });
+  }
+
   async decode() {
     const response = await fetch(`https://www.4byte.directory/api/v1/signatures/?hex_signature=${this.state.signature}`);
     const { count, results } = await response.json();
@@ -51,7 +58,7 @@ export default class FunctionSignature extends Component <Props, State> {
           </Grid>
           <Grid container>
             <Grid item xs={6}>
-              <Button>
+              <Button onClick={() => this.encode()}>
                 Encode
               </Button>
             </Grid>
