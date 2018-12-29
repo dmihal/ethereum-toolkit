@@ -4,6 +4,7 @@ import Grid from '@material-ui/core/Grid';
 
 import FunctionSignature from './cards/FunctionSignature';
 import TransactionBuilder from './cards/TransactionBuilder';
+import VanityAddress from './cards/VanityAddress';
 
 const styles = {
   app: {
@@ -19,6 +20,9 @@ const App = ({ classes }: { classes: any }) => (
       </Grid>
       <Grid item md={4}>
         <FunctionSignature />
+      </Grid>
+      <Grid item md={4}>
+        <VanityAddress />
       </Grid>
     </Grid>
   </div>
