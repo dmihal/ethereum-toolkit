@@ -4,7 +4,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import HexInput from '../components/HexInput';
-
+import VanityWorker, { WebpackWorker } from '../workers/vanity.worker';
 
 interface Props {
 }
@@ -22,8 +22,12 @@ export default class VanityAddress extends Component <Props, State> {
     isRunning: false,
   }
 
+  worker: WebpackWorker | null = null;
+
   start() {
     this.setState({ isRunning: true });
+    this.worker = new VanityWorker();
+    this.worker.postMessage('test');
   }
 
   stop() {

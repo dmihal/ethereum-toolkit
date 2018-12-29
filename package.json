@@ -18,9 +18,9 @@
     "web3": "^1.0.0-beta.37"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -35,6 +35,8 @@
   "devDependencies": {
     "@types/ethereumjs-tx": "^1.0.1",
     "@types/ethereumjs-util": "^5.2.0",
-    "@types/web3": "^1.0.14"
+    "@types/web3": "^1.0.14",
+    "react-app-rewired": "^1.6.2",
+    "worker-loader": "^2.0.0"
   }
 }
