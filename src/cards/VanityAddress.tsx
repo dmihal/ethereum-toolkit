@@ -27,7 +27,7 @@ export default class VanityAddress extends Component <Props, State> {
   start() {
     this.setState({ isRunning: true });
     this.worker = new VanityWorker();
-    this.worker.postMessage('test');
+    this.worker.postMessage({ command: 'start' });
   }
 
   stop() {
