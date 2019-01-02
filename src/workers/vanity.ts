@@ -1,7 +1,9 @@
 import ethereumUtils from 'ethereumjs-util';
 import randomBytes from 'randombytes';
 
-self.addEventListener('message', (e) => {
+const ctx: Worker = self as any;
+
+ctx.addEventListener('message', (e) => {
   if (e.data.command === 'start') {
     start();
   }
@@ -12,20 +14,21 @@ function wait(ms: number) {
 }
 
 let running = false;
+let iterations = 0;
 async function start() {
   running = true;
   while (running) {
     let result = runSeries();
     if (result) {
       console.log('done', result);
+      ctx.postMessage({ type: 'result', result });
       running = false;
       return;
     }
+    ctx.postMessage({ type: 'status', status: { iterations }});
     await wait(1);
-    console.log('Nothing yet...');
   }
 }
-
 
 function runSeries() {
   for (let i = 0; i < 1000; i++) {
@@ -35,10 +38,16 @@ function runSeries() {
     const contractaddr = ethereumUtils.generateAddress(addr, nonce).toString('hex');
     const numZeros = contractaddr.search(/[1-9a-f]/);
     if (contractaddr.indexOf('0000') == 0) {
+      iterations += i;
       console.log( `0x${contractaddr}`);
       console.log(`pk: ${privkey.toString('hex')}`);
-      return { contractaddr, privkey, };
+      return {
+        address: contractaddr,
+        privkey: privkey.toString('hex'),
+        iterations,
+      };
     }
   }
-  return false
+  iterations += 1000;
+  return false;
 }

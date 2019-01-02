@@ -4,7 +4,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import HexInput from '../components/HexInput';
-import VanityWorker, { WebpackWorker } from '../workers/vanity.worker';
+import VanityControl from '../workers/VanityControl';
 
 interface Props {
 }
@@ -22,16 +22,25 @@ export default class VanityAddress extends Component <Props, State> {
     isRunning: false,
   }
 
-  worker: WebpackWorker | null = null;
+  worker: VanityControl | null = null;
 
-  start() {
+  async start() {
     this.setState({ isRunning: true });
-    this.worker = new VanityWorker();
-    this.worker.postMessage({ command: 'start' });
+    this.worker = new VanityControl();
+    this.worker.onStatus(status => this.setState({ status: `Running, generated ${status.iterations} addresses` }));
+
+    const result = await this.worker.generateAddress();
+    const status = `Success! Generated address 0x${result.address} after ${result.iterations}`
+      + ` attempts. Address generated with private key ${result.privkey}.`;
+    this.setState({ status, isRunning: false });
   }
 
   stop() {
-    this.setState({ isRunning: false });
+    if (this.worker) {
+      this.worker.abort();
+      this.worker = null;
+      this.setState({ isRunning: false, status: 'Stopped' });
+    }
   }
 
   render() {
