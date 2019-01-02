@@ -43,8 +43,16 @@ export default class VanityAddress extends Component <Props, State> {
     this.worker.onStatus(status => this.setState({ status: `Running, generated ${status.iterations} addresses` }));
 
     const result = await this.worker.generateAddress();
-    const status = `Success! Generated address 0x${result.address} after ${result.iterations}`
-      + ` attempts. Address generated with private key ${result.privkey}.`;
+
+    let status;
+    if (this.state.addressType === 'Contract') {
+      status = `Success! Generated contract address 0x${result.address} after ${result.iterations}`
+        + ` attempts. Contract should be deployed by 0xaccount ${result.accountAddress} generated `
+        + ` with private key ${result.privkey}.`;
+    } else {
+      status = `Success! Generated address 0x${result.address} after ${result.iterations}`
+        + ` attempts. Address generated with private key ${result.privkey}.`;
+    }
     this.setState({ status, isRunning: false });
   }
 

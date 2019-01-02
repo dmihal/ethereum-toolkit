@@ -52,6 +52,7 @@ function runSeries(params: SearchParams) {
       const result: AddressResult = {
         address,
         privkey: privkey.toString('hex'),
+        accountAddress: accountAddress.toString('hex'),
         iterations,
       };
       return result;

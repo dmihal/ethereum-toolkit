@@ -12,5 +12,6 @@ export interface StatusUpdate {
 export interface AddressResult {
   address: string,
   privkey: string,
+  accountAddress: string,
   iterations: number,
 }
