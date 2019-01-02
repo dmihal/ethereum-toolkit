@@ -1,20 +1,15 @@
 import VanityWorker, { WebpackWorker } from './vanity.worker';
+import { SearchParams, StatusUpdate, AddressResult } from './vanity.types';
 
-interface StatusUpdate {
-  iterations: number,
-}
-
-interface AddressResult {
-  address: string,
-  privkey: string,
-  iterations: number,
-}
+export type SearchParams = SearchParams;
 
 export default class VanityControl {
   worker: WebpackWorker;
+  params: SearchParams;
 
-  constructor() {
+  constructor(params: SearchParams) {
     this.worker = new VanityWorker();
+    this.params = params;
   }
 
   onStatus(listener: (status: StatusUpdate) => any) {
@@ -47,7 +42,7 @@ export default class VanityControl {
   }
 
   async generateAddress() {
-    this.worker.postMessage({ command: 'start' });
+    this.worker.postMessage({ command: 'start', params: this.params });
     const result = await this.getResult();
     this.worker.terminate();
     return result as AddressResult;

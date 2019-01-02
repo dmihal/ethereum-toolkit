@@ -1,11 +1,14 @@
 import ethereumUtils from 'ethereumjs-util';
 import randomBytes from 'randombytes';
+import { SearchParams, StatusUpdate, AddressResult } from './vanity.types';
+
+const ITERATION_SIZE = 1000;
 
 const ctx: Worker = self as any;
 
 ctx.addEventListener('message', (e) => {
   if (e.data.command === 'start') {
-    start();
+    start(e.data.params as SearchParams);
   }
 });
 
@@ -15,39 +18,39 @@ function wait(ms: number) {
 
 let running = false;
 let iterations = 0;
-async function start() {
+async function start(params: SearchParams) {
   running = true;
   while (running) {
-    let result = runSeries();
+    let result = runSeries(params);
     if (result) {
-      console.log('done', result);
       ctx.postMessage({ type: 'result', result });
       running = false;
       return;
     }
-    ctx.postMessage({ type: 'status', status: { iterations }});
+    const status: StatusUpdate = { iterations };
+    ctx.postMessage({ type: 'status', status });
     await wait(1);
   }
 }
 
-function runSeries() {
-  for (let i = 0; i < 1000; i++) {
+function runSeries(params: SearchParams) {
+  for (let i = 0; i < ITERATION_SIZE; i++) {
     const privkey = randomBytes(32);
     const addr = ethereumUtils.privateToAddress(privkey);
     const nonce = ethereumUtils.toBuffer(0);
     const contractaddr = ethereumUtils.generateAddress(addr, nonce).toString('hex');
     const numZeros = contractaddr.search(/[1-9a-f]/);
-    if (contractaddr.indexOf('0000') == 0) {
+    if (contractaddr.indexOf(params.search) == 0) {
       iterations += i;
-      console.log( `0x${contractaddr}`);
-      console.log(`pk: ${privkey.toString('hex')}`);
-      return {
+
+      const result: AddressResult = {
         address: contractaddr,
         privkey: privkey.toString('hex'),
         iterations,
       };
+      return result;
     }
   }
-  iterations += 1000;
+  iterations += ITERATION_SIZE;
   return false;
 }

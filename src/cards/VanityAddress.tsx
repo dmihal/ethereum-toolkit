@@ -4,7 +4,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import HexInput from '../components/HexInput';
-import VanityControl from '../workers/VanityControl';
+import VanityControl, { SearchParams } from '../workers/VanityControl';
 
 interface Props {
 }
@@ -17,16 +17,25 @@ interface State {
 
 export default class VanityAddress extends Component <Props, State> {
   state = {
-    search: '',
+    search: '123',
     status: '',
     isRunning: false,
   }
 
   worker: VanityControl | null = null;
 
+  getSearchParams() {
+    const { search } = this.state;
+    const searchParams: SearchParams = {
+      search,
+    };
+    return searchParams;
+  }
+
   async start() {
     this.setState({ isRunning: true });
-    this.worker = new VanityControl();
+
+    this.worker = new VanityControl(this.getSearchParams());
     this.worker.onStatus(status => this.setState({ status: `Running, generated ${status.iterations} addresses` }));
 
     const result = await this.worker.generateAddress();
@@ -55,6 +64,7 @@ export default class VanityAddress extends Component <Props, State> {
             label="Begin address with:"
             value={search}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.setState({ search: e.target.value })}
+            disabled={isRunning}
           />
           <Button onClick={() => isRunning ? this.stop() : this.start()}>
             {isRunning ? 'Stop' : 'Start'}
