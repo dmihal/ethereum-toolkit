@@ -36,15 +36,21 @@ async function start(params: SearchParams) {
 function runSeries(params: SearchParams) {
   for (let i = 0; i < ITERATION_SIZE; i++) {
     const privkey = randomBytes(32);
-    const addr = ethereumUtils.privateToAddress(privkey);
-    const nonce = ethereumUtils.toBuffer(0);
-    const contractaddr = ethereumUtils.generateAddress(addr, nonce).toString('hex');
-    const numZeros = contractaddr.search(/[1-9a-f]/);
-    if (contractaddr.indexOf(params.search) == 0) {
+    const accountAddress = ethereumUtils.privateToAddress(privkey);
+
+    let address: string;
+    if (params.addressType === 'Account') {
+      address = accountAddress.toString('hex');
+    } else {
+      const nonce = ethereumUtils.toBuffer(0);
+      address = ethereumUtils.generateAddress(accountAddress, nonce).toString('hex');
+    }
+
+    if (address.indexOf(params.search) == 0) {
       iterations += i;
 
       const result: AddressResult = {
-        address: contractaddr,
+        address,
         privkey: privkey.toString('hex'),
         iterations,
       };

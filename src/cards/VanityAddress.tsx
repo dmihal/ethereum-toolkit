@@ -4,13 +4,15 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import HexInput from '../components/HexInput';
-import VanityControl, { SearchParams } from '../workers/VanityControl';
+import Radios from '../components/Radios';
+import VanityControl, { SearchParams, AddressType } from '../workers/VanityControl';
 
 interface Props {
 }
 
 interface State {
   search: string,
+  addressType: AddressType,
   status: string,
   isRunning: boolean,
 }
@@ -18,6 +20,7 @@ interface State {
 export default class VanityAddress extends Component <Props, State> {
   state = {
     search: '123',
+    addressType: 'Account' as AddressType,
     status: '',
     isRunning: false,
   }
@@ -25,9 +28,10 @@ export default class VanityAddress extends Component <Props, State> {
   worker: VanityControl | null = null;
 
   getSearchParams() {
-    const { search } = this.state;
+    const { search, addressType } = this.state;
     const searchParams: SearchParams = {
       search,
+      addressType,
     };
     return searchParams;
   }
@@ -53,13 +57,21 @@ export default class VanityAddress extends Component <Props, State> {
   }
 
   render() {
-    const { status, search, isRunning } = this.state;
+    const { status, search, isRunning, addressType } = this.state;
     return (
       <Card>
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
             Vanity Address Generator
           </Typography>
+          <div>
+            <Radios
+              value={addressType}
+              onChange={(newType: string) => this.setState({ addressType: newType as AddressType })}
+              label="Address type"
+              options={['Account', 'Contract']}
+            />
+          </div>
           <HexInput
             label="Begin address with:"
             value={search}

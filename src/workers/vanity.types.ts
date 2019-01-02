@@ -1,5 +1,8 @@
+export type AddressType = 'Account' | 'Contract';
+
 export interface SearchParams {
   search: string,
+  addressType: AddressType,
 }
 
 export interface StatusUpdate {

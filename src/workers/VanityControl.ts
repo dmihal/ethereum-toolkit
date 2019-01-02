@@ -1,7 +1,8 @@
 import VanityWorker, { WebpackWorker } from './vanity.worker';
-import { SearchParams, StatusUpdate, AddressResult } from './vanity.types';
+import { SearchParams, StatusUpdate, AddressResult, AddressType } from './vanity.types';
 
 export type SearchParams = SearchParams;
+export type AddressType = AddressType;
 
 export default class VanityControl {
   worker: WebpackWorker;
