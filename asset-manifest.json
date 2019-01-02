@@ -1,15 +1,15 @@
 {
-  "main.css": "/ethereum-toolkit/static/css/main.21698c55.chunk.css",
-  "main.js": "/ethereum-toolkit/static/js/main.98135448.chunk.js",
-  "main.js.map": "/ethereum-toolkit/static/js/main.98135448.chunk.js.map",
-  "static/js/1.45925ce2.chunk.js": "/ethereum-toolkit/static/js/1.45925ce2.chunk.js",
-  "static/js/1.45925ce2.chunk.js.map": "/ethereum-toolkit/static/js/1.45925ce2.chunk.js.map",
-  "runtime~main.js": "/ethereum-toolkit/static/js/runtime~main.dbac6db5.js",
-  "runtime~main.js.map": "/ethereum-toolkit/static/js/runtime~main.dbac6db5.js.map",
-  "static/css/main.21698c55.chunk.css.map": "/ethereum-toolkit/static/css/main.21698c55.chunk.css.map",
-  "2efce8579883f2159ea2.worker.js": "/ethereum-toolkit/2efce8579883f2159ea2.worker.js",
-  "2efce8579883f2159ea2.worker.js.map": "/ethereum-toolkit/2efce8579883f2159ea2.worker.js.map",
-  "index.html": "/ethereum-toolkit/index.html",
-  "precache-manifest.244abed82ab421c5fa4237a3355b552a.js": "/ethereum-toolkit/precache-manifest.244abed82ab421c5fa4237a3355b552a.js",
-  "service-worker.js": "/ethereum-toolkit/service-worker.js"
+  "main.css": "/static/css/main.21698c55.chunk.css",
+  "main.js": "/static/js/main.c4c2f06d.chunk.js",
+  "main.js.map": "/static/js/main.c4c2f06d.chunk.js.map",
+  "static/js/1.6b0f13ab.chunk.js": "/static/js/1.6b0f13ab.chunk.js",
+  "static/js/1.6b0f13ab.chunk.js.map": "/static/js/1.6b0f13ab.chunk.js.map",
+  "runtime~main.js": "/static/js/runtime~main.02d611fa.js",
+  "runtime~main.js.map": "/static/js/runtime~main.02d611fa.js.map",
+  "static/css/main.21698c55.chunk.css.map": "/static/css/main.21698c55.chunk.css.map",
+  "84ae922a399707168e6d.worker.js": "/84ae922a399707168e6d.worker.js",
+  "84ae922a399707168e6d.worker.js.map": "/84ae922a399707168e6d.worker.js.map",
+  "index.html": "/index.html",
+  "precache-manifest.4a7764b78c0f8d62eb11a3f64744bd21.js": "/precache-manifest.4a7764b78c0f8d62eb11a3f64744bd21.js",
+  "service-worker.js": "/service-worker.js"
 }
