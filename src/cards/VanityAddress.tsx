@@ -78,6 +78,7 @@ export default class VanityAddress extends Component <Props, State> {
               onChange={(newType: string) => this.setState({ addressType: newType as AddressType })}
               label="Address type"
               options={['Account', 'Contract']}
+              disabled={isRunning}
             />
           </div>
           <HexInput
