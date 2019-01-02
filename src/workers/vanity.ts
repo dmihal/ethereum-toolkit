@@ -5,15 +5,33 @@ import { SearchParams, StatusUpdate, AddressResult } from './vanity.types';
 const ITERATION_SIZE = 1000;
 
 const ctx: Worker = self as any;
+const performance = self.performance as Performance;
 
 ctx.addEventListener('message', (e) => {
   if (e.data.command === 'start') {
     start(e.data.params as SearchParams);
+  } else if (e.data.command === 'timeTrial') {
+    runTimeTrial(e.data.params as SearchParams);
   }
 });
 
 function wait(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function runTimeTrial(params: SearchParams) {
+  params.search = 'z'; // z isn't hexadecimal, so it will search forever
+
+  const start = performance.now();
+
+  runSeries(params);
+  wait(1);
+  runSeries(params);
+
+  const stop = performance.now();
+
+  const time = stop - start;
+  ctx.postMessage({ type: 'timeTrialResult', time, iterations: ITERATION_SIZE * 2 });
 }
 
 let running = false;

@@ -8,6 +8,8 @@ export default class VanityControl {
   worker: WebpackWorker;
   params: SearchParams;
 
+  private static timingResults: { [key: string]: number } = {};
+
   constructor(params: SearchParams) {
     this.worker = new VanityWorker();
     this.params = params;
@@ -47,6 +49,26 @@ export default class VanityControl {
     const result = await this.getResult();
     this.worker.terminate();
     return result as AddressResult;
+  }
+
+  runTimeTrial(): Promise<number> {
+    const key = `${this.params.addressType}-${this.params.search.length}`;
+    if (VanityControl.timingResults[key]) {
+      return Promise.resolve(VanityControl.timingResults[key]);
+    }
+
+    const promise = new Promise<number>((resolve) => {
+      this.worker.addEventListener('message', (e: MessageEvent) => {
+        if (e.data.type === 'timeTrialResult') {
+          const estimatedMS = (16 ** this.params.search.length) * e.data.time / e.data.iterations;
+          VanityControl.timingResults[key] = estimatedMS;
+          this.worker.terminate();
+          resolve(estimatedMS);
+        }
+      });
+    });
+    this.worker.postMessage({ command: 'timeTrial', params: this.params });
+    return promise;
   }
 
   abort() {

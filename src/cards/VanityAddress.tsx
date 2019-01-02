@@ -26,14 +26,30 @@ export default class VanityAddress extends Component <Props, State> {
   }
 
   worker: VanityControl | null = null;
+  testWorker: VanityControl | null = null;
 
   getSearchParams() {
     const { search, addressType } = this.state;
     const searchParams: SearchParams = {
-      search,
+      search: search.toLowerCase(),
       addressType,
     };
     return searchParams;
+  }
+
+  async generateEstimate() {
+    if (this.testWorker) {
+      this.testWorker.abort();
+    }
+
+    this.testWorker = new VanityControl(this.getSearchParams());
+    const estimatedMS = await this.testWorker.runTimeTrial();
+    if (!this.state.isRunning) {
+      this.setState({
+        status: `Click start to generate vanity address. Estimated run time: ${estimatedMS / 1000} sec.`
+      });
+    }
+    this.testWorker = null;
   }
 
   async start() {
@@ -84,7 +100,10 @@ export default class VanityAddress extends Component <Props, State> {
           <HexInput
             label="Begin address with:"
             value={search}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.setState({ search: e.target.value })}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              this.setState({ search: e.target.value });
+              this.generateEstimate();
+            }}
             disabled={isRunning}
           />
           <Button onClick={() => isRunning ? this.stop() : this.start()}>
